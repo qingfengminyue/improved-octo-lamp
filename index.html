@@ -1,38 +1,137 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+
+<html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>杨玉环简介</title>
-    <style>  
-      body {
-        margin: 0;
+    <style>
+      #game-board {
+        width: 400px;
+        height: 400px;
+        border: 1px solid black;
+        position: relative;
+      }
+      .snake-segment {
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        background-color: white;
+      }
+      .food {
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        background-color: red;
       }
     </style>
   </head>
   <body>
-<div style="
-    text-align: center"
-   <h1>杨玉环的简介</h1>
-   </div>
- <div style="
-    text-align: center"
-<p>﹉﹉﹉﹉﹉﹉﹉﹉﹉﹉﹉﹉﹉</p>
-     <img src="https://i.328888.xyz/2022/12/16/4DG6V.jpeg" alt="logo" width="350px" height="350px">
-   
-        <p>杨玉环是王者峡谷的一位大美女</p>
-  
-          <p>定位是中路法师</p>
-  
-          <p>详情请移步王者荣耀</p>
-          
-  
-             <a href="https://pvp.qq.com/m/"
-target="_blank"
-      rel="noopener noreferrer"
-      >
-                    王者荣耀 </a>
-  </div>
-  
-  </body>
+    <div id="game-board"></div>
+    <script>
+      const gameBoard = document.getElementById("game-board");
+      const snakeSegments = [];
+      let food;
+      let direction = "right";
+      let gameInterval;
+
+      // Create the initial snake
+      for (let i = 0; i < 10; i++) {
+        const segment = document.createElement("div");
+        segment.classList.add("snake-segment");
+        segment.style.left = `${i * 10}px`;
+        segment.style.top = "0px";
+        snakeSegments.push(segment);
+        gameBoard.appendChild(segment);
+      }
+
+      // Create the initial food
+      createFood();
+
+      // Start the game
+      gameInterval = setInterval(moveSnake, 100);
+
+      // Move the snake in the current direction
+      function moveSnake() {
+        // Get the current position of the snake's head
+        const head = snakeSegments[snakeSegments.length - 1];
+        let left = parseInt(head.style.left);
+        let top = parseInt(head.style.top);
+
+        // Update the position based on the direction
+        if (direction === "right") {
+          left += 10;
+        } else if (direction === "left") {
+          left -= 10;
+        } else if (direction === "up") {
+          top -= 10;
+        } else if (direction === "down") {
+          top += 10;
+        }
+
+        // Check for collision with the walls
+        if (left >= 400 || left < 0 || top >= 400 || top < 0) {
+          clearInterval(gameInterval);
+          alert("You lost!");
+          return;
+        }
+
+        // Check for collision with the food
+        if (left === parseInt(food.style.left) && top === parseInt(food.style.top)) {
+          createFood();
+        } else {
+          // Remove the last segment of the snake
+          const tail = snakeSegments.shift();
+          gameBoard.removeChild(tail);
+        }
+
+        // Check for collision with the snake's body
+        for (const segment of snakeSegments) {
+          if (left === parseInt(segment.style.left) && top === parseInt(segment.style.top)) {
+            clearInterval(gameInterval);
+            alert("You lost!");
+            return;
+          }
+        }
+
+        // Add a new segment for the snake's head
+        const newHead = document.createElement("div");
+        newHead.classList.add("snake-segment");
+newHead.style.left = ${left}px;
+newHead.style.top = ${top}px;
+snakeSegments.push(newHead);
+gameBoard.appendChild(newHead);
+}
+  // Create new food for the snake
+  function createFood() {
+    food = document.createElement("div");
+    food.classList.add("food");
+    food.style.left = `${Math.floor(Math.random() * 40) * 10}px`;
+    food.style.top = `${Math.floor(Math.random() * 40) * 10}px`;
+    gameBoard.appendChild(food);
+  }
+
+  // Change the direction based on the key pressed
+  document.onkeydown = function(event) {
+    switch (event.keyCode) {
+      case 37:
+        if (direction !== "right") {
+          direction = "left";
+        }
+        break;
+      case 38:
+        if (direction !== "down") {
+          direction = "up";
+        }
+        break;
+      case 39:
+        if (direction !== "left") {
+          direction = "right";
+        }
+        break;
+      case 40:
+        if (direction !== "up") {
+          direction = "down";
+        }
+        break;
+    }
+  };
+</script>
+</body>
 </html>
